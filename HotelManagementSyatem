@@ -1,0 +1,63 @@
+package SoftwareConstruction;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+/* ======================= VALUE OBJECTS ======================= */
+
+class Name {
+    private final String value;
+
+    public Name(String value) {
+        if (value == null || value.trim().isEmpty())
+            throw new IllegalArgumentException("Name cannot be null or empty");
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+}
+
+class Address {
+    private final String details;
+
+    public Address(String details) {
+        if (details == null || details.trim().isEmpty())
+            throw new IllegalArgumentException("Address cannot be null or empty");
+        this.details = details;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+}
+
+class CreditCard {
+    private final String cardNumber;
+
+    public CreditCard(String cardNumber) {
+        if (cardNumber == null || cardNumber.trim().isEmpty())
+            throw new IllegalArgumentException("Card number required");
+        this.cardNumber = cardNumber;
+    }
+
+    public String getCardNumber() {
+        return cardNumber;
+    }
+}
+
+class Money {
+    private final double amount;
+
+    public Money(double amount) {
+        if (amount < 0)
+            throw new IllegalArgumentException("Amount cannot be negative");
+        this.amount = amount;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+}
