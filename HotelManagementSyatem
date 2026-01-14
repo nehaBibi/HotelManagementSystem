@@ -61,3 +61,46 @@ class Money {
         return amount;
     }
 }
+/* ======================= CORE DOMAIN ======================= */
+
+class Guest {
+    private final Name name;
+    private final Address address;
+
+    private Guest(Name name, Address address) {
+        if (name == null || address == null)
+            throw new IllegalArgumentException("Guest info required");
+        this.name = name;
+        this.address = address;
+    }
+
+    public static Guest create(Name name, Address address) {
+        return new Guest(name, address);
+    }
+
+    public Name getName() {
+        return name;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+}
+
+class ReservorPayer {
+    private final int id;
+    private final CreditCard card;
+
+    private ReservorPayer(int id, CreditCard card) {
+        if (id <= 0)
+            throw new IllegalArgumentException("Invalid ID");
+        if (card == null)
+            throw new IllegalArgumentException("Card required");
+        this.id = id;
+        this.card = card;
+    }
+
+    public static ReservorPayer create(int id, CreditCard card) {
+        return new ReservorPayer(id, card);
+    }
+}
