@@ -132,4 +132,107 @@ class Reservation {
     public static Reservation create(Date reservationDate, Date startDate, Date endDate, int number) {
         return new Reservation(reservationDate, startDate, endDate, number);
     }
+public int getNumber() {
+        return number;
+    }
 }
+
+enum RoomKind { SINGLE, DOUBLE, SUITE }
+
+class RoomType {
+    private final RoomKind kind;
+    private final Money cost;
+
+    public RoomType(RoomKind kind, Money cost) {
+        if (kind == null || cost == null)
+            throw new IllegalArgumentException("Room type info required");
+        this.kind = kind;
+        this.cost = cost;
+    }
+
+    public RoomKind getKind() {
+        return kind;
+    }
+}
+
+class Room {
+    private final int number;
+    private Guest occupant;
+
+    public Room(int number) {
+        if (number <= 0)
+            throw new IllegalArgumentException("Invalid room number");
+        this.number = number;
+    }
+
+    public boolean isAvailable() {
+        return occupant == null;
+    }
+
+    public void assignGuest(Guest guest) {
+        if (guest == null)
+            throw new IllegalArgumentException("Guest required");
+        if (!isAvailable())
+            throw new IllegalStateException("Room already occupied");
+        this.occupant = guest;
+    }
+
+    public void removeGuest() {
+        occupant = null;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+}
+
+class Hotel {
+    private final Name name;
+    private final List<Room> rooms = new ArrayList<>();
+
+    public Hotel(Name name) {
+        if (name == null)
+            throw new IllegalArgumentException("Hotel name required");
+        this.name = name;
+    }
+
+    public void addRoom(Room room) {
+        if (room == null)
+            throw new IllegalArgumentException("Room required");
+        rooms.add(room);
+    }
+
+    public Room findAvailableRoom() {
+        return rooms.stream().filter(Room::isAvailable).findFirst().orElse(null);
+    }
+
+    public Reservation createReservation(LocalDate resDate, LocalDate start, LocalDate end, int number) {
+        return Reservation.create(resDate, start, end, number);
+    }
+
+    public String getHotelName() {
+        return name.getValue();
+    }
+}
+class HotelChain {
+    private final Name name;
+    private final List<Hotel> hotels = new ArrayList<>();
+
+    public HotelChain(Name name) {
+        if (name == null)
+            throw new IllegalArgumentException("Chain name required");
+        this.name = name;
+    }
+
+    public void addHotel(Hotel hotel) {
+        if (hotel == null)
+            throw new IllegalArgumentException("Hotel required");
+        hotels.add(hotel);
+    }
+
+    public ReservorPayer createReservorPayer(int id, CreditCard card) {
+        return ReservorPayer.create(id, card);
+    }
+}
+
+
