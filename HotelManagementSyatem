@@ -107,21 +107,18 @@ class ReservorPayer {
 /* Inserting Reservation classes and methods*/
 
 class Reservation {
-    private final Date reservationDate;
-    private final Date startDate;
-    private final Date endDate;
+    private final LocalDate reservationDate;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
     private final int number;
 
-    private Reservation(Date reservationDate, Date startDate, Date endDate, int number) {
-        if (reservationDate == null || startDate == null || endDate == null) {
+    private Reservation(LocalDate reservationDate, LocalDate startDate, LocalDate endDate, int number) {
+        if (reservationDate == null || startDate == null || endDate == null)
             throw new IllegalArgumentException("Dates cannot be null");
-        }
-        if (endDate.before(startDate)) {
+        if (endDate.isBefore(startDate))
             throw new IllegalArgumentException("End date cannot be before start date");
-        }
-        if (number <= 0) {
+        if (number <= 0)
             throw new IllegalArgumentException("Reservation number must be positive");
-        }
 
         this.reservationDate = reservationDate;
         this.startDate = startDate;
@@ -129,14 +126,14 @@ class Reservation {
         this.number = number;
     }
 
-    public static Reservation create(Date reservationDate, Date startDate, Date endDate, int number) {
+    public static Reservation create(LocalDate reservationDate, LocalDate startDate, LocalDate endDate, int number) {
         return new Reservation(reservationDate, startDate, endDate, number);
     }
-public int getNumber() {
+
+    public int getNumber() {
         return number;
     }
 }
-
 enum RoomKind { SINGLE, DOUBLE, SUITE }
 
 class RoomType {
@@ -234,5 +231,41 @@ class HotelChain {
         return ReservorPayer.create(id, card);
     }
 }
+public class HotelManagementSystem {
 
+    public static void main(String[] args) {
+
+        HotelChain chain = new HotelChain(new Name("Serena Group"));
+
+        Hotel hotel = new Hotel(new Name("Avari Towers Karachi"));
+        Room room1 = new Room(101);
+        Room room2 = new Room(102);
+        hotel.addRoom(room1);
+        hotel.addRoom(room2);
+        chain.addHotel(hotel);
+
+        Guest guest = Guest.create(new Name("Neha"), new Address("Karachi"));
+
+        ReservorPayer payer = chain.createReservorPayer(1, new CreditCard("4562-7891"));
+
+        Reservation reservation = hotel.createReservation(LocalDate.now(),
+                LocalDate.now().plusDays(1),
+                LocalDate.now().plusDays(3),
+                1001);
+
+        Room availableRoom = hotel.findAvailableRoom();
+        if (availableRoom != null) {
+            availableRoom.assignGuest(guest);
+
+            System.out.println("Hotel Name    : " + hotel.getHotelName());
+            System.out.println("Guest Checked In Successfully");
+            System.out.println("Guest Name    : " + guest.getName().getValue());
+            System.out.println("Guest Address : " + guest.getAddress().getDetails());
+            System.out.println("Room Number   : " + availableRoom.getNumber());
+            System.out.println("Reservation # : " + reservation.getNumber());
+        }
+
+        System.out.println("Hotel Management System running successfully.");
+    }
+}
 
