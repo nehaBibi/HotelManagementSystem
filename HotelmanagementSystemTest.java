@@ -146,4 +146,78 @@ public class HotelManagementSystemTest {
             fail("Expected exception for assigning to occupied room");
         } catch (IllegalStateException e) { }
     }
+     @Test
+    public void hotelValidation() {
+        Hotel hotel = new Hotel(new Name("Avari"));
+        Room room1 = new Room(101);
+        hotel.addRoom(room1);
+        assertEquals(room1, hotel.findAvailableRoom());
+
+        LocalDate today = LocalDate.now();
+        Reservation res = hotel.createReservation(today, today.plusDays(1), today.plusDays(3), 1001);
+        assertEquals(1001, res.getNumber());
+
+        try {
+            new Hotel(null);
+            fail("Expected exception for null hotel name");
+        } catch (IllegalArgumentException e) { }
+
+        try {
+            hotel.addRoom(null);
+            fail("Expected exception for null room");
+        } catch (IllegalArgumentException e) { }
+    }
+
+    @Test
+    public void hotelChainValidation() {
+        HotelChain chain = new HotelChain(new Name("Serena"));
+        Hotel hotel = new Hotel(new Name("Avari"));
+        chain.addHotel(hotel);
+
+        ReservorPayer payer = chain.createReservorPayer(1, new CreditCard("1234-5678"));
+        assertNotNull(payer);
+
+        try {
+            new HotelChain(null);
+            fail("Expected exception for null chain name");
+        } catch (IllegalArgumentException e) { }
+
+        try {
+            chain.addHotel(null);
+            fail("Expected exception for null hotel");
+        } catch (IllegalArgumentException e) { }
+    }
+
+    /* ======================= FULL SYSTEM FLOW TEST ======================= */
+
+    @Test
+    public void fullHotelManagementFlow() {
+        HotelChain chain = new HotelChain(new Name("Serena Group"));
+        Hotel hotel = new Hotel(new Name("Avari Towers Karachi"));
+        Room room1 = new Room(101);
+        Room room2 = new Room(102);
+        hotel.addRoom(room1);
+        hotel.addRoom(room2);
+        chain.addHotel(hotel);
+
+        Guest guest = Guest.create(new Name("Neha"), new Address("Karachi"));
+        ReservorPayer payer = chain.createReservorPayer(1, new CreditCard("4562-7891"));
+        assertNotNull(payer);
+
+        LocalDate today = LocalDate.now();
+        Reservation reservation = hotel.createReservation(today, today.plusDays(1), today.plusDays(3), 1001);
+        assertEquals(1001, reservation.getNumber());
+
+        Room availableRoom = hotel.findAvailableRoom();
+        assertNotNull(availableRoom);
+        availableRoom.assignGuest(guest);
+        assertFalse(availableRoom.isAvailable());
+        assertEquals("Neha", guest.getName().getValue());
+        assertEquals(101, availableRoom.getNumber());
+
+        availableRoom.removeGuest();
+        assertTrue(availableRoom.isAvailable());
+    }
+}
+
 
